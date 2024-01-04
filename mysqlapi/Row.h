@@ -27,6 +27,8 @@ public:
         return output;
     }
 
+    std::vector<std::string> const &getStrValues() const { return m_strValues; }
+
     // const std::string getString() const { return m_strValue; }
     // std::string getCppString() const
     // {

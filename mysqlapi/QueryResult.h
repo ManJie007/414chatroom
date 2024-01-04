@@ -20,6 +20,8 @@ public:
 
     void printResult(std::ostream &outputstream = std::cout);
 
+    std::vector<Row> const &getRows() const { return m_Rows; }
+
     //     virtual bool nextRow();
 
     //     uint32_t getField_idx(const std::string& name) const

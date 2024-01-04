@@ -29,6 +29,8 @@ public:
 	    return query(sql.c_str());
     }
 
+	// QueryResult* (const char *sql);
+
 	// QueryResult* pquery(const char *format,...);
 	// bool execute(const char* sql);
 	// bool execute(const char* sql, uint32_t& uAffectedCount, int& nErrno);
