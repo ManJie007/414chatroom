@@ -32,8 +32,8 @@ public:
 	// QueryResult* (const char *sql);
 
 	// QueryResult* pquery(const char *format,...);
-	// bool execute(const char* sql);
-	// bool execute(const char* sql, uint32_t& uAffectedCount, int& nErrno);
+	bool execute(const char* sql);
+	bool execute(const char* sql, int& nErrno);
 	// bool pexecute(const char *format,...);
 
 	// uint32_t getInsertID();

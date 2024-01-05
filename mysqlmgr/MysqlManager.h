@@ -51,10 +51,9 @@ public:
 
 private:
 	bool isDBExist();
-	// bool createDB();
-	// bool checkTable(const STableInfo& table);
-	// bool createTable(const STableInfo& table);
-	// bool updateTable(const STableInfo& table);
+	bool createDB();
+	bool checkTable(const STableInfo& table);
+	bool createTable(const STableInfo& table);
 
 protected:
 	std::shared_ptr<CDatabaseMysql>     m_poConn;

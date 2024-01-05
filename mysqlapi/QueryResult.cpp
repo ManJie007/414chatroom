@@ -47,7 +47,7 @@ QueryResult::~QueryResult(void)
     // endQuery();
     if (m_Result != nullptr)
     {
-        std::cout << "QueryResult::~QueryResult执行...";
+        // std::cout << "QueryResult::~QueryResult执行..." << std::endl;
         mysql_free_result(m_Result);
         m_Result = nullptr;
     }

@@ -166,85 +166,84 @@ QueryResult *CDatabaseMysql::query(const char *sql)
 //     return query(szQuery);
 // }
 
-// bool CDatabaseMysql::execute(const char* sql)
-// {
-//     if (!m_Mysql)
-//         return false;
+bool CDatabaseMysql::execute(const char* sql)
+{
+    if (!m_Mysql)
+        return false;
 
-//     {
-//         int iTempRet = mysql_query(m_Mysql, sql);
-//         if (iTempRet)
-//         {
-//             unsigned int uErrno = mysql_errno(m_Mysql);
-//             //LOGI << "CDatabaseMysql::Query, mysql is abnormal, errno : " << uErrno;
-//             if (CR_SERVER_GONE_ERROR == uErrno)
-//             {
-//                 //LOGI << "CDatabaseMysql::Query, mysql is disconnected!";
-//                 if (false == initialize(m_DBInfo.strHost, m_DBInfo.strUser, m_DBInfo.strPwd, m_DBInfo.strDBName))
-//                 {
-//                     return false;
-//                 }
-//                 //LOGI << sql;
-//                 iTempRet = mysql_real_query(m_Mysql, sql, strlen(sql));
-//                 if (iTempRet)
-//                 {
-//                     // LOGE("sql error: %s, sql: %s", mysql_error(m_Mysql), sql);
-//                     //LOGE << "query ERROR: " << mysql_error(m_Mysql);
-//                 }
-//             }
-//             else
-//             {
-//                 //LOGE << "SQL: " << sql;
-//                 //LOGE << "query ERROR: " << mysql_error(m_Mysql);
-//                 // LOGE("sql error: %s, sql: %s", mysql_error(m_Mysql), sql);
-//             }
-//             return false;
-//         }
-//     }
+    {
+        int iTempRet = mysql_query(m_Mysql, sql);
+        if (iTempRet)
+        {
+            unsigned int uErrno = mysql_errno(m_Mysql);
+            //LOGI << "CDatabaseMysql::Query, mysql is abnormal, errno : " << uErrno;
+            if (CR_SERVER_GONE_ERROR == uErrno)
+            {
+                //LOGI << "CDatabaseMysql::Query, mysql is disconnected!";
+                if (false == initialize(m_DBInfo.strHost, m_DBInfo.strUser, m_DBInfo.strPwd, m_DBInfo.strDBName))
+                {
+                    return false;
+                }
+                //LOGI << sql;
+                iTempRet = mysql_real_query(m_Mysql, sql, strlen(sql));
+                if (iTempRet)
+                {
+                    // LOGE("sql error: %s, sql: %s", mysql_error(m_Mysql), sql);
+                    //LOGE << "query ERROR: " << mysql_error(m_Mysql);
+                }
+            }
+            else
+            {
+                //LOGE << "SQL: " << sql;
+                //LOGE << "query ERROR: " << mysql_error(m_Mysql);
+                // LOGE("sql error: %s, sql: %s", mysql_error(m_Mysql), sql);
+            }
+            return false;
+        }
+    }
 
-//     return true;
-// }
+    return true;
+}
 
-// bool CDatabaseMysql::execute(const char* sql, uint32_t& uAffectedCount, int& nErrno)
-// {
-//     if (!m_Mysql)
-//         return false;
+bool CDatabaseMysql::execute(const char* sql, int& nErrno)
+{
+    if (!m_Mysql)
+        return false;
 
-//     {
-//         int iTempRet = mysql_query(m_Mysql, sql);
-//         if (iTempRet)
-//         {
-//             unsigned int uErrno = mysql_errno(m_Mysql);
-//             //LOGE << "CDatabaseMysql::Query, mysql is abnormal, errno : " << uErrno;
-//             if (CR_SERVER_GONE_ERROR == uErrno)
-//             {
-//                 //LOGE << "CDatabaseMysql::Query, mysql is disconnected!";
-//                 if (false == initialize(m_DBInfo.strHost, m_DBInfo.strUser,
-//                     m_DBInfo.strPwd, m_DBInfo.strDBName))
-//                 {
-//                     return false;
-//                 }
-//                 //LOGI << sql;
-//                 iTempRet = mysql_query(m_Mysql, sql);
-//                 nErrno = iTempRet;
-//                 if (iTempRet)
-//                 {
-//                     //LOGE << "SQL: " << sql;
-//                     //LOGE << "query ERROR: " << mysql_error(m_Mysql);
-//                 }
-//             }
-//             else
-//             {
-//                 //LOGE << "SQL: " << sql;
-//                 //LOGE << "query ERROR: " << mysql_error(m_Mysql);
-//             }
-//             return false;
-//         }
-//         uAffectedCount = static_cast<uint32_t>(mysql_affected_rows(m_Mysql));
-//     }
+    {
+        int iTempRet = mysql_query(m_Mysql, sql);
+        if (iTempRet)
+        {
+            unsigned int uErrno = mysql_errno(m_Mysql);
+            //LOGE << "CDatabaseMysql::Query, mysql is abnormal, errno : " << uErrno;
+            if (CR_SERVER_GONE_ERROR == uErrno)
+            {
+                //LOGE << "CDatabaseMysql::Query, mysql is disconnected!";
+                if (false == initialize(m_DBInfo.strHost, m_DBInfo.strUser,
+                    m_DBInfo.strPwd, m_DBInfo.strDBName))
+                {
+                    return false;
+                }
+                //LOGI << sql;
+                iTempRet = mysql_query(m_Mysql, sql);
+                nErrno = iTempRet;
+                if (iTempRet)
+                {
+                    //LOGE << "SQL: " << sql;
+                    //LOGE << "query ERROR: " << mysql_error(m_Mysql);
+                }
+            }
+            else
+            {
+                //LOGE << "SQL: " << sql;
+                //LOGE << "query ERROR: " << mysql_error(m_Mysql);
+            }
+            return false;
+        }
+    }
 
-//     return true;
-// }
+    return true;
+}
 
 // bool CDatabaseMysql::pexecute(const char* format, ...)
 // {
