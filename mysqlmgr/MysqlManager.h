@@ -3,6 +3,7 @@
 #include <memory>
 #include <map>
 #include <vector>
+#include <fstream>
 
 #include "../mysqlapi/DatabaseMysql.h"
 
@@ -54,6 +55,8 @@ private:
 	bool createDB();
 	bool checkTable(const STableInfo& table);
 	bool createTable(const STableInfo& table);
+	
+	bool initData(const char* filename);
 
 protected:
 	std::shared_ptr<CDatabaseMysql>     m_poConn;

@@ -29,7 +29,7 @@ CMysqlManager::CMysqlManager()
 		// info.m_mapField["f_phonenumber"] = {"f_phonenumber", "varchar(64) DEFAULT NULL COMMENT '电话'", "varchar(64)"};
 		// info.m_mapField["f_mail"] = {"f_mail", "varchar(256) DEFAULT NULL COMMENT '邮箱'", "varchar(256)"};
 		// info.m_mapField["f_owner_id"] = {"f_owner_id", "bigint(20) DEFAULT 0 COMMENT '群账号群主userid'", "bigint(20)"};
-		info.m_mapField["f_teaminfo"] = {"f_teaminfo", "blob default null comment '好友分组信息'", "blob"};
+		// info.m_mapField["f_teaminfo"] = {"f_teaminfo", "blob default null comment '好友分组信息'", "blob"};
 		// info.m_mapField["f_register_time"] = {"f_register_time", "datetime NOT NULL COMMENT '注册时间'", "datetime"};
 		info.m_mapField["f_remark"] = {"f_remark", "varchar(64) NULL COMMENT '备注'", "varchar(64)"};
 		info.m_mapField["f_update_time"] = {"f_update_time", "timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间'", "timestamp"};
@@ -144,8 +144,14 @@ bool CMysqlManager::init(const char *host, const char *user, const char *pwd, co
 			return false;
 		}
 	}
-	////////////////////// 2. 检查库中表是否正确 /////////////////////////
 
+	////////////////////// 3. 检查库中表是否正确 /////////////////////////
+	if (!initData("./Data.sql"))
+	{
+		return false;
+	}
+	
+	////////////////////// 4. 检查库中表是否正确 /////////////////////////
 	m_poConn.reset();
 	return true;
 }
@@ -287,4 +293,34 @@ bool CMysqlManager::createTable(const STableInfo &table)
 
 	// LOGE("Create table error, sql: %s", ss.str().c_str());
 	return false;
+}
+
+bool CMysqlManager::initData(const char *filename)
+{
+	std::ifstream file(filename);
+	if (!file.is_open())
+	{
+		std::cerr << "Error: Unable to open file " << filename << std::endl;
+		return false;
+	}
+
+	std::string query;
+	std::string line;
+	while (std::getline(file, line))
+	{
+		query += line;
+		if (line.back() == ';')
+		{
+			if (!m_poConn->execute(query.c_str()))
+			{
+				// std::cerr << "Error: Query execution failed: " << mysql_error(connection) << std::endl;
+				file.close();
+				return false;
+			}
+			query.clear();
+		}
+	}
+
+	file.close();
+	return true;
 }
