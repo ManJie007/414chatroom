@@ -146,7 +146,7 @@ bool CMysqlManager::init(const char *host, const char *user, const char *pwd, co
 	}
 
 	////////////////////// 3. 检查库中表是否正确 /////////////////////////
-	if (!initData("./Data.sql"))
+	if (!initData("../etc/Data.sql"))
 	{
 		return false;
 	}
