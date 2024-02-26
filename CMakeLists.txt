@@ -58,11 +58,9 @@ mysqlmgr/MysqlManager.cpp
 # mysqlmgr/TaskList.cpp
 )
 
-# set(json_srcs
-# jsoncpp1.9.0/json_reader.cpp
-# jsoncpp1.9.0/json_value.cpp
-# jsoncpp1.9.0/json_writer.cpp
-# )
+set(json_srcs
+json/json.hcpp
+)
 
 # set(zlib_srcs
 # zlib1.2.11/zutil.c
@@ -122,6 +120,7 @@ chatserversrc/main.cpp
 add_executable(chatserver ${net_srcs} ${chatserver_srcs} ${mysqlapi_srcs} ${mysqlmgr_srcs})
 # add_executable(chatserver ${net_srcs} ${json_srcs}  ${chatserver_srcs} ${mysqlapi_srcs} ${mysqlmgr_srcs} ${zlib_srcs} ${utils_srcs})
 #光包含库目录是没用的，还必须使用TARGET_LINK_LIBRARIES链接该库
+TARGET_INCLUDE_DIRECTORIES(chatserver PUBLIC json/)
 TARGET_LINK_LIBRARIES(chatserver mysqlclient)
 
 # add_executable(fileserver ${net_srcs}  ${fileserver_srcs} ${utils_srcs})
