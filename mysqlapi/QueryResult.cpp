@@ -27,12 +27,13 @@ QueryResult::QueryResult(MYSQL_RES *result)
 void QueryResult::printResult(std::ostream &outputstream)
 {
     std::string res;
+    res += "fields:=============================\n";
     for (size_t i = 0; i < m_FieldCount; i++)
     {
         res.append(m_Fields[i].toString());
     }
 
-    res.append("\n");
+    res.append("\nRows:===========================\n");
 
     for (size_t i = 0; i < m_RowCount; i++)
     {
