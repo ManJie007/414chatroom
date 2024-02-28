@@ -7,18 +7,17 @@
 #include "../base/Singleton.h"
 #include "../mysqlmgr/MysqlManager.h"
 #include "../base/Platform.h"
- #include "../net/EventLoop.h"
- #include "../net/EventLoopThreadPool.h"
+#include "../net/EventLoop.h"
+#include "../net/EventLoopThreadPool.h"
 
-
-// #include "UserManager.h"
-// #include "ChatServer.h"
+#include "UserManager.h"
+#include "ChatServer.h"
 // #include "MonitorServer.h"
 // #include "HttpServer.h"
 
- using namespace net;
+using namespace net;
 
- EventLoop g_mainLoop;
+EventLoop g_mainLoop;
 
 int main(int argc, char *argv[])
 {
@@ -39,7 +38,7 @@ int main(int argc, char *argv[])
     const char *logfilepath = config.getConfigName("logfiledir");
     if (logfilepath == NULL)
     {
- //       LOGF("logdir is not set in config file");
+        //       LOGF("logdir is not set in config file");
         return 1;
     }
 
@@ -49,7 +48,7 @@ int main(int argc, char *argv[])
     {
         if (mkdir(logfilepath, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH) != 0)
         {
-  //          LOGF("create base dir error, %s , errno: %d, %s", logfilepath, errno, std::strerror(errno));
+            //          LOGF("create base dir error, %s , errno: %d, %s", logfilepath, errno, std::strerror(errno));
             return 1;
         }
     }
@@ -69,17 +68,19 @@ int main(int argc, char *argv[])
     const char *dbname = config.getConfigName("dbname");
     if (!Singleton<CMysqlManager>::Instance().init(dbserver, dbuser, dbpassword, dbname))
     {
-   //     LOGF("Init mysql failed, please check your database config..............");
+        //     LOGF("Init mysql failed, please check your database config..............");
+        printf("Init mysql failed, please check your database config..............\n");
     }
 
-    //     if (!Singleton<UserManager>::Instance().init(dbserver, dbuser, dbpassword, dbname))
-    //     {
-    //         LOGF("Init UserManager failed, please check your database config..............");
-    //     }
+    if (!Singleton<UserManager>::Instance().init(dbserver, dbuser, dbpassword, dbname))
+    {
+        // LOGF("Init UserManager failed, please check your database config..............");
+        printf("Init UserManager failed, please check your database config..............\n");
+    }
 
-        //  const char* listenip = config.getConfigName("listenip");
-        //  short listenport = (short)atol(config.getConfigName("listenport"));
-        //  Singleton<ChatServer>::Instance().init(listenip, listenport, &g_mainLoop);
+    const char *listenip = config.getConfigName("listenip");
+    short listenport = (short)atol(config.getConfigName("listenport"));
+    Singleton<ChatServer>::Instance().init(listenip, listenport, &g_mainLoop);
 
     //     const char* monitorlistenip = config.getConfigName("monitorlistenip");
     //     short monitorlistenport = (short)atol(config.getConfigName("monitorlistenport"));
@@ -92,9 +93,10 @@ int main(int argc, char *argv[])
 
     //     LOGI("chatserver initialization completed, now you can use client to connect it.");
 
-         g_mainLoop.loop();
+    g_mainLoop.loop();
 
-    //     LOGI("exit chatserver.");
+    // LOGI("exit chatserver.");
+    printf("exit chatserver.\n");
 
-         return 0;
+    return 0;
 }

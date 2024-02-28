@@ -20,7 +20,6 @@ ENDIF(NOT MYSQL_LIB)
 set(net_srcs 
 base/AsyncLog.cpp
 base/ConfigFileReader.cpp
-# base/Platform.cpp
 base/Timestamp.cpp
 
 net/Acceptor.cpp
@@ -53,48 +52,20 @@ mysqlapi/Row.cpp
 
 set(mysqlmgr_srcs
 mysqlmgr/MysqlManager.cpp
-# mysqlmgr/MysqlThrd.cpp
-# mysqlmgr/MysqlThrdMgr.cpp
-# mysqlmgr/TaskList.cpp
 )
 
 set(json_srcs
 json/json.hcpp
 )
 
-# set(zlib_srcs
-# zlib1.2.11/zutil.c
-# zlib1.2.11/uncompr.c
-# zlib1.2.11/trees.c
-# zlib1.2.11/inftrees.c
-# zlib1.2.11/inflate.c
-# zlib1.2.11/inffast.c
-# zlib1.2.11/infback.c
-# zlib1.2.11/gzwrite.c
-# zlib1.2.11/gzread.c
-# zlib1.2.11/gzlib.c
-# zlib1.2.11/gzclose.c
-# zlib1.2.11/deflate.c
-# zlib1.2.11/crc32.c
-# zlib1.2.11/compress.c
-# zlib1.2.11/adler32.c
-# zlib1.2.11/ZlibUtil.cpp
-# )
-
-# set(utils_srcs
-# utils/StringUtil.cpp
-# utils/URLEncodeUtil.cpp
-# utils/MD5.cpp
-# utils/DaemonRun.cpp
-# )
 
 set(chatserver_srcs
 chatserversrc/main.cpp
-# chatserversrc/ChatServer.cpp
-# chatserversrc/ChatSession.cpp
-# chatserversrc/UserManager.cpp
+chatserversrc/ChatServer.cpp
+chatserversrc/ChatSession.cpp
+chatserversrc/UserManager.cpp
 # chatserversrc/MsgCacheManager.cpp
-# chatserversrc/TcpSession.cpp
+chatserversrc/TcpSession.cpp
 # chatserversrc/MonitorSession.cpp
 # chatserversrc/MonitorServer.cpp
 # chatserversrc/HttpSession.cpp

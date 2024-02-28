@@ -53,8 +53,6 @@ public:
 private:
 	bool isDBExist();
 	bool createDB();
-	bool checkTable(const STableInfo& table);
-	bool createTable(const STableInfo& table);
 	
 	bool initData(const char* filename);
 
