@@ -17,7 +17,7 @@ using namespace std;
 
 namespace net
 {
-    //¼ÆËãĞ£ÑéºÍ
+    //è®¡ç®—æ ¡éªŒå’Œ
     unsigned short checksum(const unsigned short* buffer, int size)
     {
         unsigned int cksum = 0;
@@ -30,14 +30,14 @@ namespace net
         {
             cksum += *(unsigned char*)buffer;
         }
-        //½«32Î»Êı×ª»»³É16
+        //å°†32ä½æ•°è½¬æ¢æˆ16
         while (cksum >> 16)
             cksum = (cksum >> 16) + (cksum & 0xffff);
 
         return (unsigned short)(~cksum);
     }
 
-    //½«Ò»¸ö4×Ö½ÚµÄÕûĞÍÊıÖµÑ¹Ëõ³É1~5¸ö×Ö½Ú
+    //å°†ä¸€ä¸ª4å­—èŠ‚çš„æ•´å‹æ•°å€¼å‹ç¼©æˆ1~5ä¸ªå­—èŠ‚
     void write7BitEncoded(uint32_t value, std::string& buf)
     {
         do
@@ -51,7 +51,7 @@ namespace net
         } while (value);
     }
 
-    //½«Ò»¸ö8×Ö½ÚµÄÕûĞÍÖµ±àÂë³É1~10¸ö×Ö½Ú
+    //å°†ä¸€ä¸ª8å­—èŠ‚çš„æ•´å‹å€¼ç¼–ç æˆ1~10ä¸ªå­—èŠ‚
     void write7BitEncoded(uint64_t value, std::string& buf)
     {
         do
@@ -65,7 +65,7 @@ namespace net
         } while (value);
     }
 
-    //½«Ò»¸ö1~5¸ö×Ö½ÚµÄ×Ö·ûÊı×éÖµ»¹Ô­³É4×Ö½ÚµÄÕûĞÍÖµ
+    //å°†ä¸€ä¸ª1~5ä¸ªå­—èŠ‚çš„å­—ç¬¦æ•°ç»„å€¼è¿˜åŸæˆ4å­—èŠ‚çš„æ•´å‹å€¼
     void read7BitEncoded(const char* buf, uint32_t len, uint32_t& value)
     {
         char c;
@@ -83,7 +83,7 @@ namespace net
         } while (c & 0x80);
     }
 
-    //½«Ò»¸ö1~10¸ö×Ö½ÚµÄÖµ»¹Ô­³É4×Ö½ÚµÄÕûĞÍÖµ
+    //å°†ä¸€ä¸ª1~10ä¸ªå­—èŠ‚çš„å€¼è¿˜åŸæˆ4å­—èŠ‚çš„æ•´å‹å€¼
     void read7BitEncoded(const char* buf, uint32_t len, uint64_t& value)
     {
         char c;
@@ -127,7 +127,7 @@ namespace net
             return false;
         }
 
-        // Æ«ÒÆµ½Êı¾İµÄÎ»ÖÃ
+        // åç§»åˆ°æ•°æ®çš„ä½ç½®
         //cur += BINARY_PACKLEN_LEN_2;	
         cur += headlen;
         if (cur + fieldlen > ptr + len)
@@ -153,7 +153,7 @@ namespace net
             return false;
         }
 
-        // Æ«ÒÆµ½Êı¾İµÄÎ»ÖÃ
+        // åç§»åˆ°æ•°æ®çš„ä½ç½®
         //cur += BINARY_PACKLEN_LEN_2;	
         cur += headlen;
         if (cur + fieldlen > ptr + len)
@@ -178,7 +178,7 @@ namespace net
             return false;
         }
 
-        // Æ«ÒÆµ½Êı¾İµÄÎ»ÖÃ
+        // åç§»åˆ°æ•°æ®çš„ä½ç½®
         //cur += BINARY_PACKLEN_LEN_2;	
         cur += headlen;
 

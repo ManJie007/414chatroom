@@ -47,8 +47,8 @@ public:
     bool isLogPackageBinaryEnabled();
 
     void getSessions(std::list<std::shared_ptr<ChatSession>>& sessions);
-    //用户id和clienttype会唯一确定一个session
-    bool getSessionByUserIdAndClientType(std::shared_ptr<ChatSession>& session, int32_t userid, int32_t clientType);
+    
+    bool getSessionByUserId(std::shared_ptr<ChatSession>& session, int32_t userid);
 
     bool getSessionsByUserId(std::list<std::shared_ptr<ChatSession>>& sessions, int32_t userid);
 

@@ -69,73 +69,21 @@ bool UserManager::loadUsersFromDb()
     return true;
 }
 
-// bool UserManager::loadUsersFromDb()
-// {
-//     std::unique_ptr<CDatabaseMysql> pConn;
-//     pConn.reset(new CDatabaseMysql());
-//     if (!pConn->initialize(m_strDbServer, m_strDbUserName, m_strDbPassword, m_strDbName))
-//     {
-//         LOGF("UserManager::LoadUsersFromDb failed, please check params: dbserver: %s, dbusername: %s, , dbpassword: %s, dbname: %s",
-//                    m_strDbServer.c_str(), m_strDbUserName.c_str(), m_strDbPassword.c_str(), m_strDbName.c_str());
-//         return false;
-//     }
+bool UserManager::getUserInfoByUsername(const std::string& username, User& u)
+{
+    std::lock_guard<std::mutex> guard(m_mutex);
+    for (const auto& iter : m_allCachedUsers)
+    {
+        if (iter.username == username)
+        {
+            u = iter;
+            return true;
+        }
+    }
+}
 
-//     //TODO: 到底是空数据集还是出错，需要修改下返回类型
-//     QueryResult* pResult = pConn->query("SELECT f_user_id, f_username, f_nickname, f_password,  f_facetype, f_customface, f_gender, f_birthday, f_signature, f_address, f_phonenumber, f_mail, f_teaminfo FROM t_user ORDER BY  f_user_id DESC");
-//     if (NULL == pResult)
-//     {
-//         LOGI("UserManager::_Query error, dbname: %s", m_strDbName.c_str());
-//         return false;
-//     }
-
-//     string teaminfo;
-//     while (true)
-//     {
-//         Field* pRow = pResult->fetch();
-//         if (pRow == NULL)
-//             break;
-
-//         User u;
-//         u.userid = pRow[0].getInt32();
-//         u.username = pRow[1].getString();
-//         u.nickname = pRow[2].getString();
-//         u.password = pRow[3].getString();
-//         u.facetype = pRow[4].getInt32();
-//         u.customface = pRow[5].getString();
-//         u.gender = pRow[6].getInt32();
-//         u.birthday = pRow[7].getInt32();
-//         u.signature = pRow[8].getString();
-//         u.address = pRow[9].getString();
-//         u.phonenumber = pRow[10].getString();
-//         u.mail = pRow[11].getString();
-//         u.teaminfo = pRow[12].getString();
-//         m_allCachedUsers.push_back(u);
-
-//         LOGI("userid: %d, username: %s, password: %s, nickname: %s, signature: %s", u.userid, u.username.c_str(), u.password.c_str(), u.nickname.c_str(), u.signature.c_str());
-
-//         //计算当前最大userid
-//         if (u.userid < GROUPID_BOUBDARY && u.userid > m_baseUserId)
-//             m_baseUserId = u.userid;
-
-//         //计算当前最大群组id
-//         if (u.userid > GROUPID_BOUBDARY && u.userid > m_baseGroupId)
-//             m_baseGroupId = u.userid;
-
-//         if (!pResult->nextRow())
-//         {
-//             break;
-//         }
-//     }
-
-//     LOGI("current base userid: %d, current base group id: %d", m_baseUserId.load(), m_baseGroupId.load());
-
-//     pResult->endQuery();
-
-//     delete pResult;
-
-//     return true;
+//     return false;
 // }
-
 // bool UserManager::addUser(User& u)
 // {
 //     std::unique_ptr<CDatabaseMysql> pConn;
