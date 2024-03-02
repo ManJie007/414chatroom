@@ -12,8 +12,6 @@
 
 using namespace std;
 
-#define DEFAULT_TEAMNAME  "My Friends"
-
 enum FRIEND_OPERATION
 {
     FRIEND_OPERATION_ADD,
@@ -74,6 +72,9 @@ public:
     //获取好友的备注名
     bool getFriendMarknameByUserId(int32_t userid1, int32_t friendid, std::string& markname);
     bool getTeamInfoByUserId(int32_t userid, std::string& teaminfo);
+    
+
+    list<User> getUserListInfo();
 
 private:
     bool loadUsersFromDb();

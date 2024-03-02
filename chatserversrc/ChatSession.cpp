@@ -163,8 +163,8 @@ bool ChatSession::process(const std::shared_ptr<TcpConnection> &conn, const char
             switch (cmd)
             {
             // 获取好友列表
-            case msg_type_getofriendlist:
-                onGetFriendListResponse(conn);
+            case msg_type_getuserlist:
+                onGetUserListResponse(conn);
                 break;
 
             // 聊天消息
@@ -241,7 +241,7 @@ void ChatSession::onLoginResponse(const std::string &data, const std::shared_ptr
     ChatServer &imserver = Singleton<ChatServer>::Instance();
 
     if (cachedUser.password != password)
-        os << "{\"code\": 103, \"msg\": \"incorrect password\"}";
+        os << "{\"code\": 1, \"msg\": \"incorrect password\"}";
     else
     {
         // 如果该账号已经登录，则将前一个账号踢下线
@@ -304,15 +304,16 @@ void ChatSession::onLoginResponse(const std::string &data, const std::shared_ptr
     // }
 }
 
-void ChatSession::onGetFriendListResponse(const std::shared_ptr<TcpConnection> &conn)
+void ChatSession::onGetUserListResponse(const std::shared_ptr<TcpConnection> &conn)
 {
-    // std::string friendlist;
-    // makeUpFriendListInfo(friendlist, conn);
-    // std::ostringstream os;
-    // os << "{\"code\": 0, \"msg\": \"ok\", \"userinfo\":" << friendlist << "}";
-    // send(msg_type_getofriendlist, m_seq, os.str());
+    std::string userlist;
+    makeUpUserListInfo(userlist, conn);
+    std::ostringstream os;
+    os << "{\"code\": 0, \"msg\": \"ok\", \"userlistinfo\":" << userlist << "}";
+    send(msg_type_getuserlist, m_seq, os.str());
 
     // LOGI("Response to client: userid: %d, cmd=msg_type_getofriendlist, data: %s", m_userinfo.userid, os.str().c_str());
+    printf("Response to client: userid: %d, cmd=msg_type_getofriendlist, data: %s\n", m_userinfo.userid, os.str().c_str());
 }
 
 void ChatSession::sendUserStatusChangeMsg(int32_t userid, int type, int status /* = 0*/)
@@ -444,115 +445,38 @@ void ChatSession::onChatResponse(int32_t targetid, const std::string &data, cons
     // }
 }
 
-void ChatSession::makeUpFriendListInfo(std::string &friendinfo, const std::shared_ptr<TcpConnection> &conn)
+void ChatSession::makeUpUserListInfo(std::string &listInfo, const std::shared_ptr<TcpConnection> &conn)
 {
-    // std::string teaminfo;
-    // UserManager& userManager = Singleton<UserManager>::Instance();
-    // ChatServer& imserver = Singleton<ChatServer>::Instance();
-    // userManager.getTeamInfoByUserId(m_userinfo.userid, teaminfo);
+    UserManager& userManager = Singleton<UserManager>::Instance();
+    list<User> users = userManager.getUserListInfo();
 
-    // /*
-    // [
-    // {
-    // "teamindex": 0,
-    // "teamname": "我的好友",
-    // "members": [
-    // {
-    // "userid": 1,
+    /*
+    {
+    "userListInfo": [
+    {
+    "userid": 1,
+    "username": "张xx"
+    },
+    {
+    "userid": 2,
+    "username": "张xx"
+    }
+    ]
+    }
+    */
 
-    // },
-    // {
-    // "userid": 2,
-    // "markname": "张xx"
-    // }
-    // ]
-    // }
-    // ]
-    // */
+    using json = nlohmann::json;
+    json user_array;
 
-    // string markname = "";
-    // if (teaminfo.empty())
-    // {
-    //     teaminfo = "[{\"teamname\": \"";
-    //     teaminfo += DEFAULT_TEAMNAME;
-    //     teaminfo += "\", \"members\": []}]";
-    // }
+    for (auto &usr : users)
+    {
+        json u;
+        u["userid"] = usr.userid;
+        u["username"] = usr.username;
+        user_array.push_back(u);
+    }
 
-    // Json::Value emptyArrayValue(Json::arrayValue);
-
-    // Json::CharReaderBuilder b;
-    // Json::CharReader* reader(b.newCharReader());
-    // Json::Value jsonRoot;
-    // JSONCPP_STRING errs;
-    // bool ok = reader->parse(teaminfo.c_str(), teaminfo.c_str() + teaminfo.length(), &jsonRoot, &errs);
-    // if (!ok || errs.size() != 0)
-    // {
-    //     LOGE("parse teaminfo json failed, userid: %d, teaminfo: %s, client: %s", m_userinfo.userid, teaminfo.c_str(), conn->peerAddress().toIpPort().c_str());
-    //     delete reader;
-    //     return;
-    // }
-    // delete reader;
-
-    // if (!jsonRoot.isArray())
-    // {
-    //     LOGE("parse teaminfo json failed, userid: %d, teaminfo: %s, client: %s", m_userinfo.userid, teaminfo.c_str(),  conn->peerAddress().toIpPort().c_str());
-    //     return;
-    // }
-
-    // // 解析分组信息，添加好友其他信息
-    // uint32_t teamCount = jsonRoot.size();
-    // int32_t userid = 0;
-
-    // //std::list<User> friends;
-    // User currentUserInfo;
-    // userManager.getUserInfoByUserId(m_userinfo.userid, currentUserInfo);
-    // User u;
-    // for (auto& friendinfo : currentUserInfo.friends)
-    // {
-    //     for (uint32_t i = 0; i < teamCount; ++i)
-    //     {
-    //         if (jsonRoot[i]["members"].isNull() || !(jsonRoot[i]["members"]).isArray())
-    //         {
-    //             jsonRoot[i]["members"] = emptyArrayValue;
-    //         }
-
-    //         if (jsonRoot[i]["teamname"].isNull() || jsonRoot[i]["teamname"].asString() != friendinfo.teamname)
-    //             continue;
-
-    //         uint32_t memberCount = jsonRoot[i]["members"].size();
-
-    //         if (!userManager.getUserInfoByUserId(friendinfo.friendid, u))
-    //             continue;
-
-    //         if (!userManager.getFriendMarknameByUserId(m_userinfo.userid, friendinfo.friendid, markname))
-    //             continue;
-
-    //         jsonRoot[i]["members"][memberCount]["userid"] = u.userid;
-    //         jsonRoot[i]["members"][memberCount]["username"] = u.username;
-    //         jsonRoot[i]["members"][memberCount]["nickname"] = u.nickname;
-    //         jsonRoot[i]["members"][memberCount]["markname"] = markname;
-    //         jsonRoot[i]["members"][memberCount]["facetype"] = u.facetype;
-    //         jsonRoot[i]["members"][memberCount]["customface"] = u.customface;
-    //         jsonRoot[i]["members"][memberCount]["gender"] = u.gender;
-    //         jsonRoot[i]["members"][memberCount]["birthday"] = u.birthday;
-    //         jsonRoot[i]["members"][memberCount]["signature"] = u.signature;
-    //         jsonRoot[i]["members"][memberCount]["address"] = u.address;
-    //         jsonRoot[i]["members"][memberCount]["phonenumber"] = u.phonenumber;
-    //         jsonRoot[i]["members"][memberCount]["mail"] = u.mail;
-    //         jsonRoot[i]["members"][memberCount]["clienttype"] = imserver.getUserClientTypeByUserId(friendinfo.friendid);
-    //         jsonRoot[i]["members"][memberCount]["status"] = imserver.getUserStatusByUserId(friendinfo.friendid);;
-    //    }// end inner for-loop
-
-    // }// end outer for - loop
-
-    // //JsonRoot.toStyledString()返回的是格式化好的json，不实用
-    // //friendinfo = JsonRoot.toStyledString();
-    // //Json::FastWriter writer;
-    // //friendinfo = writer.write(JsonRoot);
-
-    // Json::StreamWriterBuilder streamWriterBuilder;
-    // streamWriterBuilder.settings_["indentation"] = "";
-    // friendinfo = Json::writeString(streamWriterBuilder, jsonRoot);
+    listInfo = user_array.dump();
 }
 
 bool ChatSession::modifyChatMsgLocalTimeToServerTime(const std::string &chatInputJson, std::string &chatOutputJson)

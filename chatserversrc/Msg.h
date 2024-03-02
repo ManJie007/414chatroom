@@ -19,7 +19,7 @@ enum msg_type
     msg_type_heartbeat = 1000,     //心跳包
     msg_type_register,             //注册
     msg_type_login,                //登陆
-    msg_type_getofriendlist,       //获取好友列表
+    msg_type_getuserlist,       //获取好友列表
     msg_type_finduser,             //查找用户
     msg_type_operatefriend,        //添加、删除等好友操作
     msg_type_userstatuschange,     //用户信息改变通知

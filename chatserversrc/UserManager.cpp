@@ -33,6 +33,12 @@ bool UserManager::init(const char *dbServer, const char *dbUserName, const char 
     return true;
 }
 
+list<User> UserManager::getUserListInfo()
+{
+    std::lock_guard<std::mutex> guard(m_mutex);
+    return m_allCachedUsers;
+}
+
 bool UserManager::loadUsersFromDb()
 {
     std::unique_ptr<CDatabaseMysql> pConn;
@@ -69,10 +75,10 @@ bool UserManager::loadUsersFromDb()
     return true;
 }
 
-bool UserManager::getUserInfoByUsername(const std::string& username, User& u)
+bool UserManager::getUserInfoByUsername(const std::string &username, User &u)
 {
     std::lock_guard<std::mutex> guard(m_mutex);
-    for (const auto& iter : m_allCachedUsers)
+    for (const auto &iter : m_allCachedUsers)
     {
         if (iter.username == username)
         {
@@ -80,10 +86,8 @@ bool UserManager::getUserInfoByUsername(const std::string& username, User& u)
             return true;
         }
     }
+    return false;
 }
-
-//     return false;
-// }
 // bool UserManager::addUser(User& u)
 // {
 //     std::unique_ptr<CDatabaseMysql> pConn;

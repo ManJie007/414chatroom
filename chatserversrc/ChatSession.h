@@ -95,7 +95,7 @@ private:
     void onHeartbeatResponse(const std::shared_ptr<TcpConnection>& conn);
     void onRegisterResponse(const std::string& data, const std::shared_ptr<TcpConnection>& conn);
     void onLoginResponse(const std::string& data, const std::shared_ptr<TcpConnection>& conn);
-    void onGetFriendListResponse(const std::shared_ptr<TcpConnection>& conn);
+    void onGetUserListResponse(const std::shared_ptr<TcpConnection>& conn);
     void onFindUserResponse(const std::string& data, const std::shared_ptr<TcpConnection>& conn);
     void onChangeUserStatusResponse(const std::string& data, const std::shared_ptr<TcpConnection>& conn);
     void onOperateFriendResponse(const std::string& data, const std::shared_ptr<TcpConnection>& conn);
@@ -114,7 +114,7 @@ private:
     void deleteFriend(const std::shared_ptr<TcpConnection>& conn, int32_t friendid);
 
     //根据用户分组信息组装应答给客户端的好友列表信息
-    void makeUpFriendListInfo(std::string& friendinfo, const std::shared_ptr<TcpConnection>& conn);
+    void makeUpUserListInfo(std::string& friendinfo, const std::shared_ptr<TcpConnection>& conn);
 
     //将聊天消息的本地时间改成服务器时间，修改成功返回true,失败返回false。
     bool modifyChatMsgLocalTimeToServerTime(const std::string& chatInputJson, std::string& chatOutputJson);
