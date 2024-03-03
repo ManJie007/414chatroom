@@ -5,18 +5,6 @@ project (414ChatRoom)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x -g -Wall -O0 -Wno-unused-variable -pthread")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/build)
 
-# 推荐使用 CentOS 7.0 及以上系统
-# CentOS 7.0 及以上系统默认安装的是mariadb，安装方法
-# yum install mariadb-server mariadb mariadb-devel
-# CentOS 7.0 以下系统默认安装mysql，安装方法：
-# yum install mysql-server mysql mysql-devel
-
-find_library(MYSQL_LIB libmysqlclient.so /usr/lib/aarch64-linux-gnu/)
-#如果你的数据库是mariadb，你还需要安装mariadb-devel库；如果你的数据库是mysql，你需要安装mysql-devel，否则会出现如下错误提示。
-IF (NOT MYSQL_LIB)
-    MESSAGE(FATAL_ERROR "mysqlclient not found. If your mysql is mariadb, please install mariadb-devel otherwise install mysql-devel.")
-ENDIF(NOT MYSQL_LIB)
-
 set(net_srcs 
 base/AsyncLog.cpp
 base/ConfigFileReader.cpp
@@ -94,6 +82,20 @@ add_executable(chatserver ${net_srcs} ${chatserver_srcs} ${mysqlapi_srcs} ${mysq
 TARGET_INCLUDE_DIRECTORIES(chatserver PUBLIC json/)
 TARGET_LINK_LIBRARIES(chatserver mysqlclient)
 
+# <------------ add hiredis dependency --------------->
+find_path(HIREDIS_HEADER hiredis PATHS /usr/include)
+target_include_directories(chatserver PUBLIC ${HIREDIS_HEADER})
+
+find_library(HIREDIS_LIB hiredis PATHS /usr/lib/aarch64-linux-gnu)
+target_link_libraries(chatserver ${HIREDIS_LIB})
+
+# <------------ add redis-plus-plus dependency -------------->
+# NOTE: this should be *sw* NOT *redis++*
+find_path(REDIS_PLUS_PLUS_HEADER sw PATHS include/)
+target_include_directories(chatserver PUBLIC ${REDIS_PLUS_PLUS_HEADER})
+
+find_library(REDIS_PLUS_PLUS_LIB redis++ PATHS /usr/lib/aarch64-linux-gnu/lib)
+target_link_libraries(chatserver ${REDIS_PLUS_PLUS_LIB})
 # add_executable(fileserver ${net_srcs}  ${fileserver_srcs} ${utils_srcs})
 # TARGET_LINK_LIBRARIES(fileserver)
 
