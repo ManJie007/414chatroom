@@ -13,7 +13,7 @@ MsgCacheManager::~MsgCacheManager()
 {
 }
 
-void MsgCacheManager::init(const char *dbServer, const char *dbUserName, const char *dbPassword, const char *dbName, const char *redisUrl)
+bool MsgCacheManager::init(const char *dbServer, const char *dbUserName, const char *dbPassword, const char *dbName, const char *redisUrl)
 {
     m_strDbServer = dbServer;
     m_strDbUserName = dbUserName;
@@ -21,6 +21,8 @@ void MsgCacheManager::init(const char *dbServer, const char *dbUserName, const c
         m_strDbPassword = dbPassword;
     m_strDbName = dbName;
     m_strRedisUrl = redisUrl;
+
+    return loadMsgFromDbAndStoreInRedis();
 }
 
 bool MsgCacheManager::loadMsgFromDbAndStoreInRedis()
@@ -31,7 +33,7 @@ bool MsgCacheManager::loadMsgFromDbAndStoreInRedis()
     {
         // LOGF("UserManager::LoadUsersFromDb failed, please check params: dbserver: %s, dbusername: %s, , dbpassword: %s, dbname: %s",
         //            m_strDbServer.c_str(), m_strDbUserName.c_str(), m_strDbPassword.c_str(), m_strDbName.c_str());
-        printf("MsgCacheManager::loadMsgFromDbAndStoreInRedis() failed, please check params: dbserver: %s, dbusername: %s, , dbpassword: %s, dbname: %s",
+        printf("MsgCacheManager::loadMsgFromDbAndStoreInRedis() failed, please check params: dbserver: %s, dbusername: %s, , dbpassword: %s, dbname: %s\n",
                m_strDbServer.c_str(), m_strDbUserName.c_str(), m_strDbPassword.c_str(), m_strDbName.c_str());
         return false;
     }
@@ -40,7 +42,7 @@ bool MsgCacheManager::loadMsgFromDbAndStoreInRedis()
     if (nullptr == res_ptr)
     {
         // LOGI("UserManager::_Query error, dbname: %s", m_strDbName.c_str());
-        printf("MsgCacheManager::loadMsgFromDbAndStoreInRedis() Query error");
+        printf("MsgCacheManager::loadMsgFromDbAndStoreInRedis() Query error\n");
         return false;
     }
 
@@ -56,8 +58,8 @@ bool MsgCacheManager::loadMsgFromDbAndStoreInRedis()
         msg.senderusername = strValues[2];
         msg.msgcontent = strValues[3];
         msg.sendtime_str = strValues[4];
-        
-        using json = nlohmann::json; 
+
+        using json = nlohmann::json;
         json j;
         j["msgid"] = msg.msgid;
         j["senderid"] = msg.senderid;
@@ -70,17 +72,25 @@ bool MsgCacheManager::loadMsgFromDbAndStoreInRedis()
 
     using namespace sw::redis;
     // auto redis = Redis("tcp://127.00.1:6379");
-    auto redis = Redis(m_strRedisUrl);
-    // 判断列表是否存在
-    if (redis.exists("414chatmsgs"))
+    try
     {
-        // 删除列表中的所有元素
-        redis.del("414chatmsgs");
-        std::cout << "414chatmsgs delete sucess\n"
-                  << std::endl;
-    }
+        auto redis = Redis(m_strRedisUrl);
+        // 判断列表是否存在
+        if (redis.exists("414chatmsgs"))
+        {
+            // 删除列表中的所有元素
+            redis.del("414chatmsgs");
+            std::cout << "414chatmsgs delete sucess\n"
+                      << std::endl;
+        }
 
-    redis.rpush("414chatmsgs", msgs.begin(), msgs.end());
+        redis.rpush("414chatmsgs", msgs.begin(), msgs.end());
+    }
+    catch (const Error &e)
+    {
+        printf("MsgCacheManager::loadMsgFromDbAndStoreInRedis() operate redis error\n");
+        return false;
+    }
 
     return true;
 }

@@ -52,13 +52,12 @@ chatserversrc/main.cpp
 chatserversrc/ChatServer.cpp
 chatserversrc/ChatSession.cpp
 chatserversrc/UserManager.cpp
-# chatserversrc/MsgCacheManager.cpp
+chatserversrc/MsgCacheManager.cpp
 chatserversrc/TcpSession.cpp
 # chatserversrc/MonitorSession.cpp
 # chatserversrc/MonitorServer.cpp
 # chatserversrc/HttpSession.cpp
 # chatserversrc/HttpServer.cpp
-# chatserversrc/BussinessLogic.cpp
 )
 
 # set(fileserver_srcs

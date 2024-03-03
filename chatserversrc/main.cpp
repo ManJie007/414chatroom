@@ -12,6 +12,7 @@
 
 #include "UserManager.h"
 #include "ChatServer.h"
+#include "MsgCacheManager.h"
 // #include "MonitorServer.h"
 // #include "HttpServer.h"
 
@@ -77,6 +78,14 @@ int main(int argc, char *argv[])
         // LOGF("Init UserManager failed, please check your database config..............");
         printf("Init UserManager failed, please check your database config..............\n");
     }
+
+    const char *redisUrl = config.getConfigName("redisUrl");
+
+    if (!Singleton<MsgCacheManager>::Instance().init(dbserver, dbuser, dbpassword, dbname, redisUrl))
+    {
+        printf("Init MsgCacheManager failed, please check your database config..............\n");
+    }
+    
 
     const char *listenip = config.getConfigName("listenip");
     short listenport = (short)atol(config.getConfigName("listenport"));

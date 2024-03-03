@@ -33,7 +33,7 @@ public:
     MsgCacheManager(const MsgCacheManager& rhs) = delete;
     MsgCacheManager& operator =(const MsgCacheManager& rhs) = delete;
 
-    void init(const char* dbServer, const char* dbUserName, const char* dbPassword, const char* dbName, const char *redisUrl);
+    bool init(const char* dbServer, const char* dbUserName, const char* dbPassword, const char* dbName, const char *redisUrl);
     bool loadMsgFromDbAndStoreInRedis();
 
     bool addChatMsgCache(int32_t userid, const std::string& cache);
