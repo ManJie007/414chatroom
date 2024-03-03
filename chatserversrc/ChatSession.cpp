@@ -166,6 +166,10 @@ bool ChatSession::process(const std::shared_ptr<TcpConnection> &conn, const char
             case msg_type_getuserlist:
                 onGetUserListResponse(conn);
                 break;
+            // 获取所有消息
+            case msg_type_getMsgs:
+                onGetMsgsResponse(conn);
+                break;
 
             // 聊天消息
             case msg_type_chat:
@@ -447,7 +451,7 @@ void ChatSession::onChatResponse(int32_t targetid, const std::string &data, cons
 
 void ChatSession::makeUpUserListInfo(std::string &listInfo, const std::shared_ptr<TcpConnection> &conn)
 {
-    UserManager& userManager = Singleton<UserManager>::Instance();
+    UserManager &userManager = Singleton<UserManager>::Instance();
     list<User> users = userManager.getUserListInfo();
 
     /*
@@ -529,6 +533,28 @@ bool ChatSession::modifyChatMsgLocalTimeToServerTime(const std::string &chatInpu
     // chatOutputJson = Json::writeString(streamWriterBuilder, jsonRoot);
 
     return true;
+}
+
+void ChatSession::onGetMsgsResponse(const std::shared_ptr<TcpConnection> &conn)
+{
+    using json = nlohmann::json;
+    std::list<std::string> msgs = Singleton<MsgCacheManager>::Instance().loadMsgsFromRedis();
+    json msgArray;
+    
+    for (auto &msg : msgs)
+    {
+        json msg_j = json::parse(msg);
+        msgArray.push_back(msg_j);
+    }
+    
+    std::string data = msgArray.dump();
+    std::ostringstream os;
+    os << "{\"code\": 0, \"msg\": \"ok\", \"msgs\":" << data << "}";
+    printf("msgs : %s\n", data.c_str());
+    send(msg_type_getMsgs, m_seq, os.str());
+
+    // LOGI("Response to client: userid: %d, cmd=msg_type_getofriendlist, data: %s", m_userinfo.userid, os.str().c_str());
+    printf("Response to client: userid: %d, cmd=msg_type_getMsgs, data: %s\n", m_userinfo.userid, os.str().c_str());
 }
 
 // void ChatSession::enableHearbeatCheck()

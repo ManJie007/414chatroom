@@ -36,6 +36,8 @@ public:
     bool init(const char* dbServer, const char* dbUserName, const char* dbPassword, const char* dbName, const char *redisUrl);
     bool loadMsgFromDbAndStoreInRedis();
 
+    std::list<std::string> loadMsgsFromRedis();
+
     bool addChatMsgCache(int32_t userid, const std::string& cache);
     // void getChatMsgCache(int32_t userid, std::list<ChatMsgCache>& cached);
 

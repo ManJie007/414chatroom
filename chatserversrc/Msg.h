@@ -20,13 +20,14 @@ enum msg_type
     msg_type_register,             //注册
     msg_type_login,                //登陆
     msg_type_getuserlist,       //获取好友列表
-    msg_type_finduser,             //查找用户
-    msg_type_operatefriend,        //添加、删除等好友操作
-    msg_type_userstatuschange,     //用户信息改变通知
-    msg_type_updateuserinfo,       //更新用户信息
-    msg_type_modifypassword,       //修改登陆密码
-    msg_type_creategroup,          //创建群组
-    msg_type_getgroupmembers,      //获取群组成员列表
+    // msg_type_finduser,             //查找用户
+    // msg_type_operatefriend,        //添加、删除等好友操作
+    // msg_type_userstatuschange,     //用户信息改变通知
+    // msg_type_updateuserinfo,       //更新用户信息
+    // msg_type_modifypassword,       //修改登陆密码
+    // msg_type_creategroup,          //创建群组
+    // msg_type_getgroupmembers,      //获取群组成员列表
+    msg_type_getMsgs,      //获取所有消息
     msg_type_chat   = 1100,        //单聊消息
     msg_type_multichat,            //群发消息
     msg_type_kickuser,             //被踢下线

@@ -95,6 +95,28 @@ bool MsgCacheManager::loadMsgFromDbAndStoreInRedis()
     return true;
 }
 
+std::list<std::string> MsgCacheManager::loadMsgsFromRedis()
+{
+    std::list<std::string> msgs;
+    using namespace sw::redis;
+    // auto redis = Redis("tcp://127.00.1:6379");
+    try
+    {
+        auto redis = Redis(m_strRedisUrl);
+        // 判断列表是否存在
+        if (redis.exists("414chatmsgs"))
+        {
+            redis.lrange("414chatmsgs", 0, -1, std::back_inserter(msgs));
+        }
+    }
+    catch (const Error &e)
+    {
+        printf("MsgCacheManager::loadMsgsFromRedis() operate redis error\n");
+        return msgs;
+    }
+    return msgs;
+}
+
 bool MsgCacheManager::addChatMsgCache(int32_t userid, const std::string &cache)
 {
     // std::lock_guard<std::mutex> guard(m_mtChatMsgCache);

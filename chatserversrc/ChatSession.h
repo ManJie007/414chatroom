@@ -118,6 +118,9 @@ private:
 
     //将聊天消息的本地时间改成服务器时间，修改成功返回true,失败返回false。
     bool modifyChatMsgLocalTimeToServerTime(const std::string& chatInputJson, std::string& chatOutputJson);
+    
+    //返回所有聊天信息
+    void onGetMsgsResponse(const std::shared_ptr<TcpConnection>& conn);
 
 private:
     int32_t           m_id;                 //session id
