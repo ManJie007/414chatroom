@@ -121,6 +121,8 @@ private:
     
     //返回所有聊天信息
     void onGetMsgsResponse(const std::shared_ptr<TcpConnection>& conn);
+    //接受用户发送的信息
+    void onChatResponse(const std::string& data, const std::shared_ptr<TcpConnection>& conn);
 
 private:
     int32_t           m_id;                 //session id

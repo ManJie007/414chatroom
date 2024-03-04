@@ -173,13 +173,14 @@ bool ChatSession::process(const std::shared_ptr<TcpConnection> &conn, const char
 
             // 聊天消息
             case msg_type_chat:
-                int32_t target;
-                if (!readStream.ReadInt32(target))
-                {
-                    LOGE("read target error, client: %s", conn->peerAddress().toIpPort().c_str());
-                    return false;
-                }
-                onChatResponse(target, data, conn);
+                // int32_t target;
+                // if (!readStream.ReadInt32(target))
+                // {
+                //     LOGE("read target error, client: %s", conn->peerAddress().toIpPort().c_str());
+                //     return false;
+                // }
+                // onChatResponse(target, data, conn);
+                onChatResponse(data, conn);
                 break;
 
             default:
@@ -540,13 +541,13 @@ void ChatSession::onGetMsgsResponse(const std::shared_ptr<TcpConnection> &conn)
     using json = nlohmann::json;
     std::list<std::string> msgs = Singleton<MsgCacheManager>::Instance().loadMsgsFromRedis();
     json msgArray;
-    
+
     for (auto &msg : msgs)
     {
         json msg_j = json::parse(msg);
         msgArray.push_back(msg_j);
     }
-    
+
     std::string data = msgArray.dump();
     std::ostringstream os;
     os << "{\"code\": 0, \"msg\": \"ok\", \"msgs\":" << data << "}";
@@ -555,6 +556,39 @@ void ChatSession::onGetMsgsResponse(const std::shared_ptr<TcpConnection> &conn)
 
     // LOGI("Response to client: userid: %d, cmd=msg_type_getofriendlist, data: %s", m_userinfo.userid, os.str().c_str());
     printf("Response to client: userid: %d, cmd=msg_type_getMsgs, data: %s\n", m_userinfo.userid, os.str().c_str());
+}
+
+void ChatSession::onChatResponse(const std::string &data, const std::shared_ptr<TcpConnection> &conn)
+{
+    std::ostringstream os;
+    os << "{\"code\": 0, \"msg\": \"ok\", \"msg\": " << data << "}";
+
+    std::string outbuf;
+    net::BinaryStreamWriter writeStream(&outbuf);
+    writeStream.WriteInt32(msg_type_chat);
+    writeStream.WriteInt32(m_seq);
+    writeStream.WriteCString(os.str().c_str(), os.str().length());
+    writeStream.Flush();
+
+    printf("Write chat msg to redis, data: %s\n", data.c_str());
+
+    MsgCacheManager &msgCacheMgr = Singleton<MsgCacheManager>::Instance();
+    // 写入消息记录
+    if (!msgCacheMgr.addChatMsgToRedis(data))
+    {
+        // LOGE("Write chat msg to db error, senderid: %d, targetid: %d, chatmsg: %s, client: %s", m_userinfo.userid, targetid, data.c_str(), conn->peerAddress().toIpPort().c_str());
+        printf("ChatSession::onChatResponse() add chat msg error, data: %s\n", data.c_str());
+    }
+
+    ChatServer &imserver = Singleton<ChatServer>::Instance();
+    // 给当前所有用户连接发送消息
+    std::list<std::shared_ptr<ChatSession>> targetSessions;
+    imserver.getSessions(targetSessions);
+    for (auto &iter : targetSessions)
+    {
+        if (iter)
+            iter->send(outbuf);
+    }
 }
 
 // void ChatSession::enableHearbeatCheck()

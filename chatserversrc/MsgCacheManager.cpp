@@ -117,18 +117,35 @@ std::list<std::string> MsgCacheManager::loadMsgsFromRedis()
     return msgs;
 }
 
-bool MsgCacheManager::addChatMsgCache(int32_t userid, const std::string &cache)
+bool MsgCacheManager::addChatMsgToRedis(const std::string &cache)
 {
-    // std::lock_guard<std::mutex> guard(m_mtChatMsgCache);
-    // ChatMsgCache c;
-    // c.userid = userid;
-    // c.chatmsg.append(cache.c_str(), cache.length());
-    // m_listChatMsgCache.push_back(c);
-    // LOGI("append chat msg to cache, userid: %d, m_listChatMsgCache.size(): , cache length: %d", userid, m_listChatMsgCache.size(), cache.length());
-    // //TODO: 存盘或写入数据库以防止程序崩溃丢失
-
+    using namespace sw::redis;
+    // auto redis = Redis("tcp://127.00.1:6379");
+    try
+    {
+        auto redis = Redis(m_strRedisUrl);
+        redis.rpush("414chatmsgs", cache);
+    }
+    catch (const Error &e)
+    {
+        printf("MsgCacheManager::addChatMsgToRedis() operate redis error, data : %s\n", cache);
+        return false;
+    }
     return true;
 }
+
+// bool MsgCacheManager::addChatMsgCache(int32_t userid, const std::string &cache)
+// {
+//     // std::lock_guard<std::mutex> guard(m_mtChatMsgCache);
+//     // ChatMsgCache c;
+//     // c.userid = userid;
+//     // c.chatmsg.append(cache.c_str(), cache.length());
+//     // m_listChatMsgCache.push_back(c);
+//     // LOGI("append chat msg to cache, userid: %d, m_listChatMsgCache.size(): , cache length: %d", userid, m_listChatMsgCache.size(), cache.length());
+//     // //TODO: 存盘或写入数据库以防止程序崩溃丢失
+
+//     return true;
+// }
 
 // void MsgCacheManager::getChatMsgCache(int32_t userid, std::list<ChatMsgCache>& cached)
 // {

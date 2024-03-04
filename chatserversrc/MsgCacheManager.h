@@ -38,7 +38,8 @@ public:
 
     std::list<std::string> loadMsgsFromRedis();
 
-    bool addChatMsgCache(int32_t userid, const std::string& cache);
+    // bool addChatMsgCache(int32_t userid, const std::string& cache);
+    bool addChatMsgToRedis(const std::string& cache);
     // void getChatMsgCache(int32_t userid, std::list<ChatMsgCache>& cached);
 
 
